@@ -14,4 +14,18 @@ const isValidObjectId = function (objectId) {
     return mongoose.Types.ObjectId.isValid(objectId)
 }
 
-module.exports = { isValid, isValidRequestBody }
+const validatePhone = function (phone) {
+    var re =/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/ ;
+    if(typeof(phone) == 'string'){
+    return re.test(phone.trim())
+    }else{
+        return re.test(phone)
+    }
+};
+
+
+const validateEmail = function (email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email.trim())
+};
+module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail}

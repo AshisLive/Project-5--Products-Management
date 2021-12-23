@@ -1,4 +1,5 @@
 const aws = require("aws-sdk");
+const bcrypt = require("bcrypt")
 
 aws.config.update({
   accessKeyId: "AKIAY3L35MCRRMC6253G",  // id
@@ -32,4 +33,10 @@ let uploadFile = async (file) => {
   });
 }
 
-module.exports.uploadFile = uploadFile
+const hashPassword = async (password, saltRounds = 2) => {
+
+  return await bcrypt.hash(password, saltRounds);
+
+}
+
+module.exports={ uploadFile, hashPassword}
