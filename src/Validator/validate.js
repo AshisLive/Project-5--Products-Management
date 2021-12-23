@@ -28,4 +28,10 @@ const validateEmail = function (email) {
     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return re.test(email.trim())
 };
-module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail}
+
+const validString = function(value) {
+    if(typeof value !== 'string') return false
+    if (typeof value === 'string' && value.trim().length === 0) return false //it checks whether the string contain only space or not 
+    return true;
+}
+module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail, validString}
