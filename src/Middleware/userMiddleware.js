@@ -3,6 +3,7 @@ const {uploadFile} = require('../AWS/awsS3')
 const jwt = require("jsonwebtoken")
 
 const urlOfProfileImage = async function (req, res, next) {
+try{
     let files = req.files;
     if (files && files.length > 0) {
         //upload to s3 and return true..incase of error in uploading this will goto catch block( as rejected promise)
@@ -14,9 +15,13 @@ const urlOfProfileImage = async function (req, res, next) {
     else {
         res.status(400).send({ status: false, msg: "No file to write" });
     }
+} catch (error) {
+    res.status(500).send({ status: false, message: error.message })
+}
 }
 
 const urlOfProfileImageForUpdate = async function (req, res, next) {
+    try{
     let files = req.files;
     if (files && files.length > 0) {
         //upload to s3 and return true..incase of error in uploading this will goto catch block( as rejected promise)
@@ -28,35 +33,32 @@ const urlOfProfileImageForUpdate = async function (req, res, next) {
     else {
         next()
     }
+} catch (error) {
+    res.status(500).send({ status: false, message: error.message })
+}
 }
 
-const mid1 = function (req, res, next) {
+const authenticationToken = function (req, res, next) {
     try {
         let token = req.header('Authorization', 'Bearer Token')
         token= token.split(' ')
-        console.log(token)
         if (!token[0] && !token[1]) {
             return res.status(401).send({ status: false, msg: "no authentication token" })
         } else {
             
-            let decodeToken = jwt.decode(token[1], '22nd-Dec-Project-Product')
-            console.log('lne 26' , decodeToken)
+            let decodeToken = jwt.decode(token[1], 'user123')
             if (decodeToken) {
                 req.userId = decodeToken.userId
                 next()
-
             } else {
                 res.status(401).send({ status: false, msg: "not a valid token" })
             }
         }
-
     } catch (error) {
         console.log(error)
         res.status(500).send({ status: false, msg: error })
     }
-
-
 }
-module.exports.mid1=mid1
+module.exports.authenticationToken=authenticationToken
 module.exports.urlOfProfileImage = urlOfProfileImage
 module.exports.urlOfProfileImageForUpdate = urlOfProfileImageForUpdate 

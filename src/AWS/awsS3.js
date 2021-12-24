@@ -7,7 +7,6 @@ aws.config.update({
   region: "ap-south-1" 
 });
 
-
 // this function uploads file to AWS and gives back the url for the file
 let uploadFile = async (file) => {
   return new Promise(function (resolve, reject) { 
@@ -33,10 +32,5 @@ let uploadFile = async (file) => {
   });
 }
 
-const hashPassword = async (password, saltRounds = 2) => {
 
-  return await bcrypt.hash(password, saltRounds);
-
-}
-
-module.exports={ uploadFile, hashPassword}
+module.exports={ uploadFile }
