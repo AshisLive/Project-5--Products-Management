@@ -15,10 +15,10 @@ const isValidObjectId = function (objectId) {
 }
 
 const validatePhone = function (phone) {
-    var re =/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/ ;
-    if(typeof(phone) == 'string'){
-    return re.test(phone.trim())
-    }else{
+    var re = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+    if (typeof (phone) == 'string') {
+        return re.test(phone.trim())
+    } else {
         return re.test(phone)
     }
 };
@@ -28,9 +28,22 @@ const validateEmail = function (email) {
     return re.test(email.trim())
 };
 
-const validString = function(value) {
-    if(typeof value !== 'string') return false
+const validString = function (value) {
+    if (typeof value !== 'string') return false
     if (typeof value === 'string' && value.trim().length === 0) return false //it checks whether the string contain only space or not 
     return true;
 }
-module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail, validString}
+
+
+const validforEnum = function (value) {
+    let avilable = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+    value = value.split(",")
+    for (let x of value) {
+        if (avilable.includes(x) == false) {
+            return false
+        }
+    }
+    return true;
+}
+
+module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail, validString, validforEnum }
