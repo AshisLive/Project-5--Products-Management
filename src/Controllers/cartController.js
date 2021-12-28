@@ -5,42 +5,42 @@ const { isValid, validforEnum, isValidRequestBody, isValidObjectId, validString 
 const createCart = async function (req, res) {
     try {
         const userId = req.params.userId
-        let { items } = req.body
-        let productCollection = [];
-        const isCartAlreadyCreated = await cartModel.findOne({ userId: userId });
+        let { items, cartId } = req.body
+        let increaseQuantity, index
+        let isCartAlreadyCreated = await cartModel.findOne({ userId: userId });
+        const productPrice = await productModel.findOne({ _id: items[0].productId })
+        let price = productPrice.price * items[0].quantity
 
-        // for (let product of items) {
-        //     productCollection.push(product.productId)
-        // }
-
-        // const productPrices = await productModel.find({ _id: { $in: productCollection } }).select({ _id: 1, price: 1 })
-
-        // const price = [];
-        // for (let i = 0; i < productPrices.length; i++) {
-        //     for (var j = 0; j < items.length; j++) {
-        //         if (productPrices[i]._id == items[j].productId) { 
-        //             price.push(productPrices[i].price * items[j].quantity);
-        //         }
-        //     }
-        // }
-
-        
-       
-        let totalPrice = price.reduce(function (a, b) {
-            return a + b;
-        }, 0)
-
+        //1 cond=> if already created but want to added more quantity of existing one
         if (isCartAlreadyCreated) {
-            const checkingDetails = await cartModel.findOneAndUpdate({ userId: isCartAlreadyCreated.userId }, { $addToSet: { items: { $each: items } } }, { new: true })
-            let newTotalPrice = checkingDetails.totalPrice + totalPrice
-            let newTotalItems = checkingDetails.totalItems + price.length
-            const alreadyCreatedCart = await cartModel.findOneAndUpdate({ userId: isCartAlreadyCreated.userId }, { totalPrice: newTotalPrice, totalItems: newTotalItems }, { new: true })
-            return res.status(200).send({ status: true, msg: "successfully updated", data: alreadyCreatedCart })
-        } else {
-            const cart = await cartModel.create({ userId: userId, items: items, totalPrice: totalPrice, totalItems: price.length })
-            res.status(201).send({ status: true, msg: "successfully created cart", data: cart })
+            for (let i = 0; i < isCartAlreadyCreated.items.length; i++) {
+                if (items[0].productId == isCartAlreadyCreated.items[i].productId) {
+                    increaseQuantity = isCartAlreadyCreated.items[i].quantity
+                    index = i
+                }
+            }
+        }
+        if (increaseQuantity) {
+            increaseQuantity = increaseQuantity + items[0].quantity
+            let increasePrice = price + isCartAlreadyCreated.totalPrice
+
+            isCartAlreadyCreated.items[index].quantity = increaseQuantity
+            const detail = await cartModel.findOneAndUpdate({ userId: isCartAlreadyCreated.userId }, { items: isCartAlreadyCreated.items, totalPrice: increasePrice }, { new: true })
+            return res.status(200).send({ status: true, msg: "successfully updated", data: detail })
         }
 
+        //2 cond=> if already created and new product to be added
+        if (isCartAlreadyCreated) {
+            let newTotalPrice = isCartAlreadyCreated.totalPrice + price
+            let newTotalItems = isCartAlreadyCreated.totalItems + 1
+            const alreadyCreatedCart = await cartModel.findOneAndUpdate({ userId: isCartAlreadyCreated.userId }, { $addToSet: { items: { $each: items } }, totalPrice: newTotalPrice, totalItems: newTotalItems }, { new: true })
+            return res.status(200).send({ status: true, msg: "successfully updated", data: alreadyCreatedCart })
+        } else { //=3 cond=> newly created cart
+            const cart = await cartModel.create({ userId: userId, items: items, totalPrice: price, totalItems: 1 })
+           return res.status(201).send({ status: true, msg: "successfully created cart", data: cart })
+        }
+
+       
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message })
     }
