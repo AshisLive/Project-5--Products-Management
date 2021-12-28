@@ -16,7 +16,7 @@ const createProduct = async function (req, res) {
 
         const isTitleAlreadyUsed = await productModel.findOne({ title: title });
         if (isTitleAlreadyUsed) {
-            res.status(400).send({ status: false, message: `${title} title is already registered`, });
+            res.status(400).send({ status: false, message: `${title} title is already registered`});
             return;
         }
         if (!isValid(description)) {
@@ -70,8 +70,8 @@ const createProduct = async function (req, res) {
                 res.status(400).send({ status: false, message: 'plz provide one availableSize : ["S", "XS","M","X", "L","XXL", "XL"]' })
                 return
             }
+            requestBody.availableSizes = availableSizes.split(",")
         }
-        requestBody.availableSizes = availableSizes.split(",")
 
         const reg = /^-?\d*\.?\d*$/
         if (!reg.test(installments)) {
