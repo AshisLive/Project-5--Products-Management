@@ -46,4 +46,9 @@ const validforEnum = function (value) {
     return true;
 }
 
-module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail, validString, validforEnum }
+const validforStatus = function (value) {
+    if (["pending", "completed", "cancled"].indexOf(value) == -1) { return false } //mean's he have not found it
+    if (["pending", "completed", "cancled"].indexOf(value) > -1) { return true }   //mean's he have found it
+}
+
+module.exports = { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail, validString, validforEnum, validforStatus }
