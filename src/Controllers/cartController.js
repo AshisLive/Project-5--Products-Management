@@ -38,6 +38,9 @@ const createCart = async function (req, res) {
 
         let isCartAlreadyCreated = await cartModel.findOne({ userId: userId });
         const productPrice = await productModel.findOne({ _id: items[0].productId })
+        if(productPrice.isDeleted==true){
+            return res.status(404).send({status:false ,msg:"product is deleted already"})
+        }
         let price = productPrice.price * items[0].quantity
 
         //1 cond=> if already created but want to added more quantity of existing one
