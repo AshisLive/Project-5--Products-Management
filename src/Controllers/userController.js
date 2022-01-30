@@ -1,7 +1,7 @@
 const encrypt = require("../Encryption/Encrypt")
 const userModel = require("../Models/userModel")
 const { isValid, isValidRequestBody, isValidObjectId, validatePhone, validateEmail, validString } = require('../Validator/validate')
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
 const createUser = async function (req, res) {
@@ -221,9 +221,9 @@ const updateUser = async function (req, res) {
             if (password.trim().length > 7 && password.trim().length < 16) {
                 const hashPassword = await encrypt.hashPassword(password.trim())
                 filterQuery['password'] = hashPassword;
-            }else{
+            } else {
                 res.status(400).send({ status: false, message: `${password} invalid password it should be between 8 to 15` })
-            return
+                return
             }
         }
 

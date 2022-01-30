@@ -90,7 +90,7 @@ const createProduct = async function (req, res) {
 const getProduct = async function (req, res) {
     try {
         if (!isValidRequestBody(req.query)) {
-            return res.status(400).send({ status: false, message: 'Please provide book details' })
+            return res.status(400).send({ status: false, message: 'Please provide product details' })
         }
 
         let { size, price, priceSort } = req.query
@@ -152,7 +152,7 @@ const getProduct = async function (req, res) {
 
         query['isDeleted'] = false;
         let productsOfQuery = await productModel.find(query).sort({ price: query.priceSort })
-        return res.status(200).send({ status: true, message: 'Books list', data: productsOfQuery })
+        return res.status(200).send({ status: true, message: 'Product list', data: productsOfQuery })
 
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
@@ -290,7 +290,7 @@ const deleteProduct = async function (req, res) {
         }
         const deletedProduct = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false }, { isDeleted: true, deletedAt: new Date() }, { new: true })
         if (deletedProduct) {
-            res.status(200).send({ status: true, msg: "This book has been succesfully deleted" })
+            res.status(200).send({ status: true, msg: "This product has been succesfully deleted" })
             return
         }
         res.status(404).send({ status: false, message: `product alredy deleted not found` })

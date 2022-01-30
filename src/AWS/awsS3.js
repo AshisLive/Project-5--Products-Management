@@ -1,5 +1,5 @@
 const aws = require("aws-sdk");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 
 aws.config.update({
   accessKeyId: "AKIAY3L35MCRRMC6253G",  // id
